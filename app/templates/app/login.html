@@ -1,0 +1,106 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | Hall Allocation System</title>
+
+    <!-- External Stylesheet -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background: linear-gradient(45deg, #1e3c72, #2a5298);
+            color: white;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .login-container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+        }
+        .input-field {
+            width: 100%;
+            padding: 12px;
+            margin: 10px 0;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            box-sizing: border-box; /* Ensures padding doesn't shrink width */
+            background: white;
+            color: black;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            background: #007bff;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+            button:hover {
+                background: #0056b3;
+            }
+
+        .register-link {
+            margin-top: 10px;
+            display: block;
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+        }
+
+            .register-link:hover {
+                text-decoration: underline;
+            }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h2>Login</h2>
+        <form method="POST" action="{% url 'login' %}">
+            {% csrf_token %}
+            <input type="text" name="username" placeholder="Username" class="input-field" required>
+            <input type="password" name="password" placeholder="Password" class="input-field" required>
+            <select name="role" class="input-field" required>
+                <option value="">Select Role</option>
+                <option value="Administrator">Administrator</option>
+                <option value="Club Head">Club Head</option>
+                <option value="Faculty In-Charge">Faculty In-Charge</option>
+                <option value="Student">Student</option>
+                <option value="Principal">Principal</option>
+                <option value="IQAC">IQAC</option>
+                <option value="Resource Approval Personnel">Resource Approval Personnel</option>
+                <option value="HOD">HOD</option>
+                <option value="Dean of Student Affairs">Dean of Student Affairs</option>
+            </select>
+            <button type="submit">Login</button>
+        </form>
+        <a href="#" class="register-link">Sign up/Register</a>
+    </div>
+</body>
+</html>

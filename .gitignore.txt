@@ -1,0 +1,24 @@
+# Ignore compiled Python files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore database file (if using SQLite)
+db.sqlite3
+
+# Ignore virtual environments
+env/
+venv/
+
+# Ignore VS Code and PyCharm settings
+.vscode/
+.idea/
+
+# Ignore Django migration cache
+**/migrations/*.pyc
+**/migrations/__pycache__/
+
+# Ignore system-specific files
+.DS_Store
+Thumbs.db

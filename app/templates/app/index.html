@@ -1,0 +1,156 @@
+﻿{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hall Allocation System</title>
+
+    <!-- Corrected CSS & JS Paths -->
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script src="{% static 'js/script.js' %}" defer></script>
+
+    <!-- FullCalendar Library -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@5.11.3/main.min.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background: linear-gradient(rgba(50, 50, 50, 0.8), rgba(50, 50, 50, 0.8)), url("{% static 'images/tkm_college.jpg' %}") no-repeat center center/cover;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            transition: background 0.5s ease-in-out;
+        }
+
+        .overlay {
+            text-align: center;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            border-radius: 10px;
+            animation: fadeIn 1s ease-in-out;
+            margin-bottom: 20px;
+        }
+
+        .tabs button {
+            background: #444;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background 0.3s, transform 0.2s;
+        }
+
+            .tabs button:hover {
+                background: #666;
+                transform: scale(1.1);
+            }
+
+        #calendar-container {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 90%;
+            max-width: 1200px;
+            height: 85vh;
+            background: rgba(255, 255, 255, 0.98);
+            padding: 20px;
+            border-radius: 10px;
+            color: black;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.5s ease-in-out;
+            flex-direction: row;
+        }
+
+        #calendar {
+            flex: 3;
+            width: 100%;
+            height: 100%;
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        #event-list {
+            flex: 1;
+            padding: 15px;
+            background: #f9f9f9;
+            border-left: 2px solid #ddd;
+            overflow-y: auto;
+            max-height: 75vh;
+            display: none;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 20px;
+            background: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+            .close-btn:hover {
+                background: #cc0000;
+            }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+
+            to {
+                opacity: 1;
+            }
+        }
+    </style>
+
+    <script>
+        function showCalendar() {
+            document.getElementById("calendar-container").style.display = "flex";
+        }
+
+        function closeCalendar() {
+            document.getElementById("calendar-container").style.display = "none";
+            document.getElementById("event-list").style.display = "none";
+        }
+    </script>
+</head>
+
+<body>
+    <div class="overlay">
+        <h1>Hall Allocation System</h1>
+        <p>Manage and book halls efficiently with real-time availability.</p>
+        <div class="tabs">
+            <button onclick="showCalendar()">View Calendar</button>
+            <button onclick="location.href='{% url 'login' %}'">Login</button>
+        </div>
+    </div>
+
+    <div id="calendar-container">
+        <button class="close-btn" onclick="closeCalendar()">✖</button>
+        <div id='calendar'></div>
+        <div id='event-list'>
+            <h3>Events on Selected Date</h3>
+            <ul id='event-details'></ul>
+        </div>
+    </div>
+</body>
+
+</html>
