@@ -14,7 +14,7 @@ venv/
 # Ignore VS Code and PyCharm settings
 .vscode/
 .idea/
-
+.vs/
 # Ignore Django migration cache
 **/migrations/*.pyc
 **/migrations/__pycache__/
@@ -22,3 +22,6 @@ venv/
 # Ignore system-specific files
 .DS_Store
 Thumbs.db
+# Ignore Visual Studio project files
+*.pyproj
+*.pyproj.user
