@@ -24,5 +24,4 @@ venv/
 Thumbs.db
 # Ignore Visual Studio-specific files
 .vs/
-*.pyproj
-*.pyproj.user
+
