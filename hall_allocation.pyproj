@@ -5,7 +5,7 @@
     <Name>hall_allocation</Name>
     <RootNamespace>hall_allocation</RootNamespace>
     <TestFramework>Pytest</TestFramework>
-    <InterpreterId>MSBuild|env|$(MSBuildProjectFullPath)</InterpreterId>
+    <InterpreterId>MSBuild|env1|$(MSBuildProjectFullPath)</InterpreterId>
   </PropertyGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -63,6 +63,15 @@
     <Content Include="app\static\css\style.css" />
     <Content Include="app\static\images\tkm_college.jpg" />
     <Content Include="app\static\js\script.js" />
+    <Content Include="app\templates\app\administrator_dashboard.html" />
+    <Content Include="app\templates\app\club_head_dashboard.html" />
+    <Content Include="app\templates\app\dean_dashboard.html" />
+    <Content Include="app\templates\app\faculty_dashboard.html" />
+    <Content Include="app\templates\app\hod_dashboard.html" />
+    <Content Include="app\templates\app\iqac_dashboard.html" />
+    <Content Include="app\templates\app\principal_dashboard.html" />
+    <Content Include="app\templates\app\resource_approval_personnel_dashboard.html" />
+    <Content Include="app\templates\app\student_dashboard.html" />
     <Content Include="hall_allocation\.gitignore" />
     <Content Include="requirements.txt" />
     <Content Include="db.sqlite3" />
@@ -101,6 +110,24 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Interpreter Include="env1\">
+      <Id>env1</Id>
+      <Version>0.0</Version>
+      <Description>env1 (Python 3.13 (64-bit))</Description>
+      <InterpreterPath>Scripts\python.exe</InterpreterPath>
+      <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
+      <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
+      <Architecture>X64</Architecture>
+    </Interpreter>
+    <Interpreter Include="env2\">
+      <Id>env2</Id>
+      <Version>0.0</Version>
+      <Description>env2 (Python 3.13 (64-bit))</Description>
+      <InterpreterPath>Scripts\python.exe</InterpreterPath>
+      <WindowsInterpreterPath>Scripts\pythonw.exe</WindowsInterpreterPath>
+      <PathEnvironmentVariable>PYTHONPATH</PathEnvironmentVariable>
+      <Architecture>X64</Architecture>
+    </Interpreter>
     <Interpreter Include="env\">
       <Id>env</Id>
       <Version>3.9</Version>

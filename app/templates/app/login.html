@@ -39,6 +39,7 @@
             border: none;
             border-radius: 5px;
         }
+
         .input-field {
             width: 100%;
             padding: 12px;
@@ -46,10 +47,11 @@
             border: none;
             border-radius: 5px;
             font-size: 16px;
-            box-sizing: border-box; /* Ensures padding doesn't shrink width */
+            box-sizing: border-box;
             background: white;
             color: black;
         }
+
         button {
             width: 100%;
             padding: 10px;
@@ -77,16 +79,33 @@
             .register-link:hover {
                 text-decoration: underline;
             }
+
+        /* Invalid User Message (Initially Hidden) */
+        .error-message {
+            color: red;
+            display: none; /* Change this to 'block' if login fails */
+        }
     </style>
+
+    <script>
+        function redirectToRole() {
+            var role = document.getElementById("roleSelect").value;
+            if (role) {
+                window.location.href = "/" + role.replace(/ /g, "_").toLowerCase() + "_dashboard/"; // Redirects based on role
+            } else {
+                document.getElementById("error-msg").style.display = "block"; // Show error message
+            }
+        }
+    </script>
 </head>
 <body>
     <div class="login-container">
         <h2>Login</h2>
-        <form method="POST" action="{% url 'login' %}">
+        <form onsubmit="event.preventDefault(); redirectToRole();">
             {% csrf_token %}
             <input type="text" name="username" placeholder="Username" class="input-field" required>
             <input type="password" name="password" placeholder="Password" class="input-field" required>
-            <select name="role" class="input-field" required>
+            <select name="role" id="roleSelect" class="input-field" required>
                 <option value="">Select Role</option>
                 <option value="Administrator">Administrator</option>
                 <option value="Club Head">Club Head</option>
@@ -100,6 +119,8 @@
             </select>
             <button type="submit">Login</button>
         </form>
+        <!-- Invalid User Message -->
+        <p id="error-msg" class="error-message">Invalid user, please check credentials.</p>
         <a href="#" class="register-link">Sign up/Register</a>
     </div>
 </body>

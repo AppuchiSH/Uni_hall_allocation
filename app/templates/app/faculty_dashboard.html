@@ -1,0 +1,70 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faculty In-Charge Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script src="{% static 'js/script.js' %}" defer></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        .header {
+            background: #333;
+            color: white;
+            padding: 15px;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .buttons {
+            margin-top: 20px;
+        }
+
+            .buttons button {
+                background: #007BFF;
+                color: white;
+                padding: 10px 20px;
+                margin: 10px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: 0.3s;
+            }
+
+                .buttons button:hover {
+                    background: #0056b3;
+                }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Faculty In-Charge Dashboard</h1>
+        </div>
+        <p>Welcome, Faculty In-Charge! Manage and maintain venue allocations using the options below:</p>
+
+        <div class="buttons">
+            <button onclick="location.href='{% url 'manage_venues' %}'">Manage Venues</button>
+            <button onclick="location.href='{% url 'approve_bookings' %}'">Approve Bookings</button>
+            <button onclick="location.href='{% url 'view_schedule' %}'">View Schedule</button>
+            <button onclick="location.href='{% url 'logout' %}'" style="background: #dc3545;">Logout</button>
+        </div>
+    </div>
+</body>
+</html>

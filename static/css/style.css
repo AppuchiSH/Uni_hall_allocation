@@ -1,0 +1,57 @@
+/* Calendar Container */
+#calendar-container {
+    display: none;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 1200px;
+    height: 85vh;
+    background: rgba(255, 255, 255, 0.98);
+    padding: 20px;
+    border-radius: 10px;
+    color: black;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 0.5s ease-in-out;
+    flex-direction: row;
+    overflow: hidden; /* Prevents content from extending beyond container */
+}
+
+/* Calendar Layout Fix */
+#calendar {
+    flex: 3;
+    width: 100%;
+    height: 100%;
+    background: white;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow-y: auto; /* Allows scrolling inside calendar */
+}
+
+/* Force Month View Styling */
+.fc-daygrid-day {
+    min-height: 120px; /* Ensure equal-sized day boxes */
+    border: 1px solid #ddd;
+}
+
+.fc-event {
+    font-size: 14px;
+    padding: 5px;
+    background: #007bff;
+    color: white;
+    border-radius: 3px;
+    margin: 2px 0;
+}
+
+/* Event List Panel */
+#event-list {
+    flex: 1;
+    padding: 15px;
+    background: #f9f9f9;
+    border-left: 2px solid #ddd;
+    overflow-y: auto;
+    max-height: 75vh;
+    display: none;
+}

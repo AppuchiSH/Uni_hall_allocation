@@ -1,0 +1,77 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resource Approval Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script src="{% static 'js/script.js' %}" defer></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        .header {
+            background: #333;
+            color: white;
+            padding: 15px;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .buttons {
+            margin-top: 20px;
+        }
+
+            .buttons button {
+                background: #007BFF;
+                color: white;
+                padding: 10px 20px;
+                margin: 10px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: 0.3s;
+            }
+
+                .buttons button:hover {
+                    background: #0056b3;
+                }
+
+        .logout-btn {
+            background: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Resource Approval Dashboard</h1>
+        </div>
+        <p>Welcome, Resource Approval Person! Manage resource requests and approvals below:</p>
+
+        <div class="buttons">
+            <button onclick="location.href='{% url 'view_resource_requests' %}'">View Resource Requests</button>
+            <button onclick="location.href='{% url 'approve_resources' %}'">Approve Resources</button>
+            <button onclick="location.href='{% url 'view_approved_resources' %}'">View Approved Resources</button>
+            <button onclick="location.href='{% url 'resource_feedback' %}'">Resource Feedback</button>
+            <button onclick="location.href='{% url 'generate_reports' %}'">Generate Reports</button>
+            <button onclick="location.href='{% url 'manage_resource_inventory' %}'">Manage Resource Inventory</button>
+            <button onclick="location.href='{% url 'logout' %}'" class="logout-btn">Logout</button>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,77 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IQAC Dashboard</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <script src="{% static 'js/script.js' %}" defer></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            text-align: center;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            border-radius: 10px;
+        }
+
+        .header {
+            background: #333;
+            color: white;
+            padding: 15px;
+            border-radius: 10px 10px 0 0;
+        }
+
+        .buttons {
+            margin-top: 20px;
+        }
+
+            .buttons button {
+                background: #28a745;
+                color: white;
+                padding: 10px 20px;
+                margin: 10px;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: 0.3s;
+            }
+
+                .buttons button:hover {
+                    background: #218838;
+                }
+
+        .logout-btn {
+            background: #dc3545;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>IQAC Dashboard</h1>
+        </div>
+        <p>Welcome, IQAC Team! Manage quality assurance activities and accreditation processes using the options below:</p>
+
+        <div class="buttons">
+            <button onclick="location.href='{% url 'monitor_quality' %}'">Monitor Quality</button>
+            <button onclick="location.href='{% url 'submit_reports' %}'">Submit Reports</button>
+            <button onclick="location.href='{% url 'accreditation_status' %}'">Accreditation Status</button>
+            <button onclick="location.href='{% url 'manage_feedback' %}'">Manage Feedback</button>
+            <button onclick="location.href='{% url 'organize_workshops' %}'">Organize Workshops</button>
+            <button onclick="location.href='{% url 'review_policies' %}'">Review Policies</button>
+            <button onclick="location.href='{% url 'logout' %}'" class="logout-btn">Logout</button>
+        </div>
+    </div>
+</body>
+</html>
