@@ -6,7 +6,8 @@ from datetime import datetime
 from django.shortcuts import render, redirect
 from django.http import HttpRequest
 # views.py
-from django.shortcuts import render
+from django.contrib.auth import login
+from .forms import RegistrationForm
 
 #faculty in charge
 def view_schedule(request):
@@ -226,3 +227,33 @@ def manage_courses(request):
     # Your logic here
     return render(request, 'manage_courses.html')
 
+#DEAN
+def dean_dashboard(request):
+    # Sample event data (replace with actual database data)
+    events = [
+        {"name": "Annual Tech Fest", "status": "Pending", "sub_tasks": ["Budget Approval", "Venue Confirmation"]},
+        {"name": "Cultural Fest", "status": "Approved", "sub_tasks": ["Artist Invitation", "Logistics Arrangement"]},
+    ]
+    
+    return render(request, "app/dean_dashboard.html", {"events": events})
+
+
+#REGISTER
+
+
+from django.shortcuts import render, redirect
+from django.contrib.auth import login
+from .forms import RegistrationForm  # Ensure RegistrationForm exists
+
+def register(request):
+    if request.method == "POST":
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.set_password(form.cleaned_data['password'])
+            user.save()
+            login(request, user)
+            return redirect('index')  # Ensure 'index' is a valid URL name
+    else:
+        form = RegistrationForm()
+    return render(request, 'app/register.html', {'form': form})

@@ -6,6 +6,7 @@ from django.urls import path
 from django.contrib import admin
 from django.contrib.auth.views import LogoutView
 from app import views  # Import views
+from app.views import register  
 
 urlpatterns = [
     path('monitor_quality/', views.monitor_quality, name='monitor_quality'),
@@ -67,4 +68,11 @@ urlpatterns = [
     path('resource_approval_personnel_dashboard/', views.resource_dashboard, name='resource_dashboard'),
     path('hod_dashboard/', views.hod_dashboard, name='hod_dashboard'),
     path('dean_of_student_affairs_dashboard/', views.dean_dashboard, name='dean_dashboard'),
+
+    #DEAN
+    path("dean_dashboard/", views.dean_dashboard, name="dean_dashboard"),
+    #REGISER
+    path('register/', register, name='register'),
+
+
 ]

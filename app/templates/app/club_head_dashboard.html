@@ -1,74 +1,390 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Club Head Dashboard</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <script src="{% static 'js/script.js' %}" defer></script>
+    <title>Hall Allocation & Report Submission</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: #f4f4f4;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
             margin: 0;
-            padding: 0;
-            text-align: center;
         }
+
+        .sidebar {
+            width: 250px;
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+        }
+
+            .sidebar h3 {
+                text-align: center;
+            }
+
+            .sidebar button {
+                display: block;
+                width: 100%;
+                margin: 10px 0;
+                padding: 10px;
+                background: #34495e;
+                color: white;
+                border: none;
+                text-align: left;
+                cursor: pointer;
+                border-radius: 5px;
+            }
+
+                .sidebar button:hover {
+                    background: #1abc9c;
+                }
 
         .container {
-            max-width: 900px;
-            margin: 20px auto;
+            margin-left: 270px;
+            width: 50%;
             background: white;
             padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
 
-        .header {
-            background: #333;
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        select, input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .suggestions {
+            margin-top: 10px;
+            font-size: 14px;
+            color: #007bff;
+        }
+
+        button.submit-btn {
+            width: 100%;
+            padding: 10px;
+            border: none;
+            background: #007bff;
             color: white;
-            padding: 15px;
-            border-radius: 10px 10px 0 0;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
         }
 
-        .buttons {
+            button.submit-btn:hover {
+                background: #0056b3;
+            }
+
+        .timeline {
+            display: none;
+            margin-left: 270px;
+            width: 50%;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .event {
+            padding: 10px;
+            border-bottom: 1px solid #ccc;
+        }
+
+            .event span {
+                font-weight: bold;
+            }
+
+        .rejection-reason {
+            color: red;
+            display: none;
+        }
+
+        .success-message {
+            color: green;
+            display: none;
+            text-align: center;
             margin-top: 20px;
         }
 
-            .buttons a {
-                display: inline-block;
-                background: #007BFF;
-                color: white;
-                padding: 10px 20px;
-                margin: 10px;
-                text-decoration: none;
-                border-radius: 5px;
-                transition: 0.3s;
-            }
-
-                .buttons a:hover {
-                    background: #0056b3;
-                }
-
-                .buttons a.logout {
-                    background: #dc3545;
-                }
+        .time-day {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 14px;
+            color: #333;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Club Head Dashboard</h1>
-        </div>
-        <p>Welcome, Club Head! Manage club activities using the options below:</p>
-
-        <div class="buttons">
-            <a href="{% url 'manage_events' %}">Manage Events</a>
-            <a href="{% url 'allocate_resources' %}">Allocate Resources</a>
-            <a href="{% url 'view_reports' %}">View Reports</a>
-            <a href="{% url 'logout' %}" class="logout">Logout</a>
-        </div>
+    <div class="time-day" id="timeDay"></div>
+    <div class="sidebar">
+        <h3>Dashboard</h3>
+        <button onclick="showForm('hallRequest')">Request a Hall</button>
+        <button onclick="showForm('timeline')">Timeline</button>
+        <button onclick="showForm('submitReport')">Submit Report</button>
+        <button onclick="logout()">Logout</button>
     </div>
+
+    <div class="container" id="hallRequest">
+        <h2>Hall Allocation Request</h2>
+
+        <h3>Event IQAC No: <span id="iqacNumber">------</span></h3>
+
+        <form onsubmit="return validateForm()">
+            <div class="form-group">
+                <label for="applicant">Name of Applicant</label>
+                <input type="text" id="applicant" name="applicant" placeholder="Enter your name" required>
+            </div>
+            <div class="form-group">
+                <label for="department">Department/Branch/Specialization</label>
+                <select id="department" name="department">
+                    <option value="">Select Department</option>
+                    <option value="CSE">CSE</option>
+                    <option value="ECE">ECE</option>
+                    <option value="EEE">EEE</option>
+                    <option value="Civil">Civil</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="date">Date</label>
+                <input type="date" id="date" name="date" required>
+            </div>
+            <div class="form-group">
+                <label for="time">Time</label>
+                <input type="time" id="time" name="time" required>
+                <select id="timePeriod" name="timePeriod" required>
+                    <option value="AM">AM</option>
+                    <option value="PM">PM</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="purpose">Purpose of Usage</label>
+                <textarea id="purpose" name="purpose" rows="4" placeholder="Enter the purpose of usage" required></textarea>
+            </div>
+            <div>
+                <label>
+                    <input type="checkbox" id="podiumCheck" onchange="toggleInput('podium')"> Podium
+                </label>
+                <input type="number" id="podium" min="1" max="10" value="1" style="display:none;">
+            </div>
+
+            <div>
+                <label>
+                    <input type="checkbox" id="micCheck" onchange="toggleInput('mic')"> Mic
+                </label>
+                <input type="number" id="mic" min="1" max="10" value="1" style="display:none;">
+            </div>
+
+            <div>
+                <label>
+                    <input type="checkbox" id="ledCheck" onchange="toggleInput('led')"> LED
+                </label>
+                <input type="number" id="led" min="1" max="10" value="1" style="display:none;">
+            </div>
+
+            <div>
+                <label>
+                    <input type="checkbox" id="stageCheck" onchange="toggleInput('stage')"> Stage
+                </label>
+                <input type="number" id="stage" min="1" max="10" value="1" style="display:none;">
+            </div>
+
+            <div>
+                <label>
+                    <input type="checkbox" id="diasCheck" onchange="toggleInput('dias')"> Dias
+                </label>
+                <input type="number" id="dias" min="1" max="10" value="1" style="display:none;">
+            </div>
+
+            <script>
+                function toggleInput(id) {
+                    const checkbox = document.getElementById(id + "Check");
+                    const numberInput = document.getElementById(id);
+                    numberInput.style.display = checkbox.checked ? "inline-block" : "none";
+                }
+            </script>
+
+            <div class="form-group">
+                <label for="participants">Approximate Number of Participants</label>
+                <input type="number" id="participants" name="participants" oninput="suggestHalls()" required>
+            </div>
+            <div class="suggestions" id="hallSuggestions"></div>
+            <div class="form-group">
+                <input type="checkbox" id="declaration" required>
+                <label for="declaration" id="declarationLabel"></label>
+            </div>
+            <button type="submit" class="submit-btn">Submit Request</button>
+        </form>
+        <div class="success-message" id="successMessage">Form submitted successfully!</div>
+    </div>
+
+    <div class="timeline" id="timeline">
+        <h2>Event Timeline</h2>
+        <div class="form-group">
+            <label for="statusFilter">Filter by Status</label>
+            <select id="statusFilter" onchange="renderTimeline()">
+                <option value="all">All</option>
+                <option value="Pending">Pending</option>
+                <option value="Approved">Approved</option>
+                <option value="Rejected">Rejected</option>
+            </select>
+        </div>
+        <div id="eventList"></div>
+    </div>
+
+    <div class="container" id="submitReport" style="display: none;">
+        <h2>Submit Report</h2>
+        <form onsubmit="return validateReportForm()">
+            <div class="form-group">
+                <label for="eventName">Event Name</label>
+                <input type="text" id="eventName" name="eventName" placeholder="Enter event name" required>
+            </div>
+            <div class="form-group">
+                <label for="eventIQAC">Event IQAC No</label>
+                <input type="text" id="eventIQAC" name="eventIQAC" placeholder="Enter event IQAC number" required>
+            </div>
+            <div class="form-group">
+                <label for="report">Upload Report (PDF, < 1MB)</label>
+                <input type="file" id="report" name="report" accept="application/pdf" required>
+            </div>
+            <button type="submit" class="submit-btn">Submit Report</button>
+        </form>
+        <div class="success-message" id="reportSuccessMessage">Report submitted successfully!</div>
+    </div>
+
+    <script>
+        let iqacCounter = 12345;
+        function generateIQACNumber() {
+            document.getElementById("iqacNumber").innerText = iqacCounter;
+            iqacCounter++;
+        }
+        window.onload = function () {
+            generateIQACNumber();
+            updateTimeDay();
+        };
+
+        function updateTimeDay() {
+            const now = new Date();
+            const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+            const timeDay = now.toLocaleDateString('en-US', options) + ' ' + now.toLocaleTimeString('en-US');
+            document.getElementById("timeDay").innerText = timeDay;
+        }
+
+        function suggestHalls() {
+            const numParticipants = parseInt(document.getElementById("participants").value) || 0;
+            const halls = [
+                { name: "Auditorium", capacity: 200 },
+                { name: "Conference Hall", capacity: 100 },
+                { name: "Seminar Room", capacity: 50 }
+            ];
+            const bestHalls = halls.filter(h => h.capacity >= numParticipants).slice(0, 3);
+            document.getElementById("hallSuggestions").innerText =
+                bestHalls.length > 0 ? "Suggested Halls: " + bestHalls.map(h => h.name).join(", ") : "No suitable halls available.";
+        }
+
+        function validateForm() {
+            const applicant = document.getElementById("applicant").value;
+            const department = document.getElementById("department").value;
+            const declarationText = `I, ${applicant} of the department of ${department}, holding the post of head in the club, assure that the hall will be used as stated for the purpose. No eatable/drinking of any kind will be permitted. I assure the responsibility of the usage of hall for the above stated program.`;
+            document.getElementById("declarationLabel").innerText = declarationText;
+
+            if (!document.getElementById("declaration").checked) {
+                alert("Please check the declaration before submitting.");
+                return false;
+            }
+            document.getElementById("successMessage").style.display = "block";
+            return false; // Prevent actual form submission for demonstration
+        }
+
+        function validateReportForm() {
+            const fileInput = document.getElementById("report");
+            const file = fileInput.files[0];
+            if (file.size > 1048576) { // 1MB in bytes
+                alert("File size must be less than 1MB.");
+                return false;
+            }
+            document.getElementById("reportSuccessMessage").style.display = "block";
+            return false; // Prevent actual form submission for demonstration
+        }
+
+        function showForm(id) {
+            document.getElementById("hallRequest").style.display = id === "hallRequest" ? "block" : "none";
+            document.getElementById("timeline").style.display = id === "timeline" ? "block" : "none";
+            document.getElementById("submitReport").style.display = id === "submitReport" ? "block" : "none";
+            if (id === "timeline") {
+                renderTimeline();
+            }
+        }
+
+        function toggleRejectionReason(id) {
+            const reason = document.getElementById(id);
+            reason.style.display = reason.style.display === "none" ? "block" : "none";
+        }
+
+        const events = [
+            { name: "AI Workshop", status: "Pending", date: "2023-11-01", reason: "" },
+            { name: "Coding Bootcamp", status: "Rejected", date: "2023-10-15", reason: "Overlapping schedule with another event." },
+            { name: "Tech Talk", status: "Approved", date: "2023-09-20", reason: "" }
+        ];
+
+        function renderTimeline() {
+            const statusFilter = document.getElementById("statusFilter").value;
+            const filteredEvents = events.filter(event => statusFilter === "all" || event.status === statusFilter);
+
+            const sortedEvents = filteredEvents.sort((a, b) => {
+                if (a.status === b.status) {
+                    return new Date(a.date) - new Date(b.date);
+                }
+                const statusOrder = { "Pending": 1, "Approved": 2, "Rejected": 3 };
+                return statusOrder[a.status] - statusOrder[b.status];
+            });
+
+            const eventList = document.getElementById("eventList");
+            eventList.innerHTML = "";
+            sortedEvents.forEach((event, index) => {
+                const eventDiv = document.createElement("div");
+                eventDiv.className = "event";
+                eventDiv.innerHTML = `
+                            <p><span>Event ${index + 1}:</span> ${event.name} - <span style="color: ${event.status === "Pending" ? "orange" : event.status === "Approved" ? "green" : "red"};">${event.status}</span></p>
+                            ${event.status === "Rejected" ? `<button onclick="toggleRejectionReason('rejectionReason${index}')">View Reason</button>` : ""}
+                            <p class="rejection-reason" id="rejectionReason${index}" style="display: none;">Reason: ${event.reason}</p>
+                        `;
+                eventList.appendChild(eventDiv);
+            });
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = '/login'; // Replace with your actual login URL
+            }
+        }
+    </script>
 </body>
 </html>
+
+

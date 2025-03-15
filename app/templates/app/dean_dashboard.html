@@ -1,70 +1,180 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dean of Student Affairs Dashboard</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <script src="{% static 'js/script.js' %}" defer></script>
+    <title>Dean Dashboard</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background: #f4f4f4;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            height: 100vh;
             margin: 0;
-            padding: 0;
-            text-align: center;
+            background-color: #f4f4f4;
         }
 
-        .container {
-            max-width: 900px;
-            margin: 20px auto;
-            background: white;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-        }
-
-        .header {
-            background: #333;
+        .sidebar {
+            width: 250px;
+            background-color: #2c3e50;
             color: white;
             padding: 15px;
-            border-radius: 10px 10px 0 0;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
 
-        .buttons {
-            margin-top: 20px;
-        }
-
-            .buttons button {
-                background: #007BFF;
+            .sidebar h2 {
+                font-size: 18px;
+                margin-bottom: 10px;
                 color: white;
-                padding: 10px 20px;
-                margin: 10px;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-                transition: 0.3s;
             }
 
-                .buttons button:hover {
-                    background: #0056b3;
+            .sidebar button {
+                background-color: #34495e;
+                border: none;
+                color: white;
+                padding: 10px;
+                cursor: pointer;
+                text-align: left;
+                width: 100%;
+                font-size: 16px;
+            }
+
+                .sidebar button:hover {
+                    background-color: #1abc9c;
                 }
+
+        .time-container {
+            margin-bottom: 20px;
+            color: white;
+            text-align: center;
+            font-size: 20px;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background-color: white;
+        }
+
+        .event-card {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .accept {
+            background-color: green;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .reject {
+            background-color: red;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            display: none;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Dean of Student Affairs Dashboard</h1>
-        </div>
-        <p>Welcome, Dean of Student Affairs! Manage student-related activities using the options below:</p>
-
-        <div class="buttons">
-            <button onclick="location.href='{% url 'approve_club_activities' %}'">Approve Club Activities</button>
-            <button onclick="location.href='{% url 'review_student_requests' %}'">Review Student Requests</button>
-            <button onclick="location.href='{% url 'view_reports' %}'">View Reports</button>
-            <button onclick="location.href='{% url 'logout' %}'" style="background: #dc3545;">Logout</button>
-        </div>
+    <div class="sidebar">
+        <div class="time-container" id="time-container"></div>
+        <button onclick="showSection('pending')">Pending Events</button>
+        <button onclick="showSection('accepted')">Accepted Events</button>
+        <button onclick="showSection('rejected')">Rejected Events</button>
+        <button onclick="showSection('notifications')">Send Notification</button>
+        <button onclick="validateLogout()" class="logout-btn">Logout</button>
     </div>
+    <div class="main-content" id="content-area">
+        <h2>Dean Dashboard</h2>
+        <div id="pending">
+            <h3>Pending Events</h3>
+            <div class="event-card" id="event1">
+                Event 1 - Department Event
+                <button class="accept" onclick="approveEvent('event1')">Accept</button>
+                <button class="reject" onclick="rejectEvent('event1')">Reject</button>
+            </div>
+        </div>
+        <div id="accepted" style="display: none;">
+            <h3>Accepted Events</h3>
+        </div>
+        <div id="rejected" style="display: none;">
+            <h3>Rejected Events</h3>
+        </div>
+        <div id="notifications" style="display: none;">
+            <h3>Send Notification</h3>
+            <input type="email" id="email" placeholder="Enter Email">
+            <textarea id="message" placeholder="Enter message"></textarea>
+            <button onclick="sendNotification()">Send</button>
+        </div>
+        <div class="popup" id="popup"></div>
+    </div>
+    <script>
+        function showSection(section) {
+            document.querySelectorAll('.main-content > div').forEach(div => div.style.display = 'none');
+            document.getElementById(section).style.display = 'block';
+        }
+        function approveEvent(eventId) {
+            let event = document.getElementById(eventId);
+            document.getElementById('accepted').innerHTML += `<div class='event-card'>${event.innerHTML}</div>`;
+            event.remove();
+            showPopup('Event Approved');
+        }
+        function rejectEvent(eventId) {
+            let reason = prompt('Enter reason for rejection');
+            if (reason) {
+                let event = document.getElementById(eventId);
+                document.getElementById('rejected').innerHTML += `<div class='event-card'>${event.innerHTML}<br>Reason: ${reason}</div>`;
+                event.remove();
+                showPopup('Event Rejected');
+            }
+        }
+        function sendNotification() {
+            let email = document.getElementById('email').value;
+            let message = document.getElementById('message').value;
+            if (!email || !message) {
+                alert('Please fill all fields');
+                return;
+            }
+            showPopup('Notification Sent');
+        }
+        function showPopup(message) {
+            let popup = document.getElementById('popup');
+            popup.innerText = message;
+            popup.style.display = 'block';
+            setTimeout(() => popup.style.display = 'none', 2000);
+        }
+        function updateTime() {
+            let now = new Date();
+            document.getElementById('time-container').innerHTML = `Time: ${now.toLocaleTimeString()}<br>Date: ${now.toLocaleDateString()}`;
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+
+        function validateLogout() {
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = '{% url "logout" %}';
+            }
+        }
+    </script>
 </body>
 </html>
+
