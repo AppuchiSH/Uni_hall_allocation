@@ -2,7 +2,6 @@
 Django settings for hall_allocation project.
 
 Based on 'django-admin startproject' using Django 2.1.2.
-
 For more information on this file, see
 https://docs.djangoproject.com/en/2.1/topics/settings/
 
