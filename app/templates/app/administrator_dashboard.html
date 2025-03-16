@@ -1,70 +1,204 @@
-{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Administrator Dashboard</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <script src="{% static 'js/script.js' %}" defer></script>
+    <title>Admin Dashboard</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             background: #f4f4f4;
             margin: 0;
-            padding: 0;
-            text-align: center;
+            display: flex;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: #343a40;
+            color: white;
+            height: 100vh;
+            padding-top: 20px;
+            position: fixed;
+        }
+
+            .sidebar button {
+                display: block;
+                width: 100%;
+                background: none;
+                color: white;
+                border: none;
+                padding: 15px;
+                text-align: left;
+                cursor: pointer;
+                font-size: 16px;
+            }
+
+                .sidebar button:hover {
+                    background: #495057;
+                }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 20px;
+            width: 100%;
         }
 
         .container {
-            max-width: 900px;
-            margin: 20px auto;
             background: white;
             padding: 20px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             border-radius: 10px;
         }
 
-        .header {
-            background: #333;
-            color: white;
-            padding: 15px;
-            border-radius: 10px 10px 0 0;
-        }
-
-        .buttons {
+        .example-list {
             margin-top: 20px;
         }
 
-            .buttons button {
-                background: #007BFF;
-                color: white;
-                padding: 10px 20px;
-                margin: 10px;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-                transition: 0.3s;
+        .example-item {
+            background: #e9ecef;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .delete-btn {
+            background: red;
+            color: white;
+            border: none;
+            padding: 5px;
+            cursor: pointer;
+        }
+
+        .add-form {
+            margin-top: 15px;
+        }
+
+            .add-form input {
+                padding: 8px;
+                margin-right: 5px;
             }
 
-                .buttons button:hover {
-                    background: #0056b3;
-                }
+            .add-form button {
+                padding: 8px;
+                background: #28a745;
+                color: white;
+                border: none;
+                cursor: pointer;
+            }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Administrator Dashboard</h1>
-        </div>
-        <p>Welcome, Admin! Manage the system using the options below:</p>
 
-        <div class="buttons">
-            <button onclick="location.href='{% url 'manage_users' %}'">Manage Users</button>
-            <button onclick="location.href='{% url 'approve_requests' %}'">Approve Requests</button>
-            <button onclick="location.href='{% url 'system_settings' %}'">System Settings</button>
-            <button onclick="location.href='{% url 'logout' %}'" style="background: #dc3545;">Logout</button>
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <button onclick="showSection('dashboard')">Dashboard</button>
+        <button onclick="showSection('manage_halls')">Manage Halls</button>
+        <button onclick="showSection('event_reports')">Event Reports</button>
+        <button onclick="showSection('send_notification')">Send Notification</button>
+        <button style="background: #dc3545;">Logout</button>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div id="dashboard" class="content-section container">
+            <h2>Welcome, Admin!</h2>
+            <p>Use the sidebar to navigate.</p>
+        </div>
+
+        <!-- Manage Halls -->
+        <div id="manage_halls" class="content-section container" style="display: none;">
+            <h2>Manage Halls</h2>
+            <p>Add, edit, or delete halls.</p>
+            <div class="example-list" id="hall-list">
+                <div class="example-item">Hall A - Capacity: 100 <button class="delete-btn" onclick="deleteItem(this)">X</button></div>
+                <div class="example-item">Hall B - Capacity: 150 <button class="delete-btn" onclick="deleteItem(this)">X</button></div>
+            </div>
+            <div class="add-form">
+                <input type="text" id="hall-name" placeholder="Hall Name">
+                <input type="number" id="hall-capacity" placeholder="Capacity">
+                <button onclick="addHall()">Add Hall</button>
+            </div>
+        </div>
+
+        <!-- Event Reports -->
+        <div id="event_reports" class="content-section container" style="display: none;">
+            <h2>Event Reports</h2>
+            <label for="filter">Filter by:</label>
+            <select id="filter">
+                <option value="all">All</option>
+                <option value="approved">Approved</option>
+                <option value="pending">Pending</option>
+            </select>
+            <button onclick="filterReports()">Apply</button>
+
+            <div class="example-list" id="reports-list">
+                <div class="example-item" data-status="approved">Event: Coding Hackathon - Status: Approved</div>
+                <div class="example-item" data-status="pending">Event: Robotics Workshop - Status: Pending</div>
+                <div class="example-item" data-status="approved">Event: AI Seminar - Status: Approved</div>
+            </div>
+        </div>
+
+        <!-- Send Notification -->
+        <div id="send_notification" class="content-section container" style="display: none;">
+            <h2>Send Notification</h2>
+            <textarea id="notification-text" placeholder="Type your message here..." rows="4" style="width: 100%;"></textarea>
+            <button onclick="sendNotification()">Send</button>
         </div>
     </div>
+
+    <script>
+        function showSection(section) {
+            document.querySelectorAll('.content-section').forEach(sec => {
+                sec.style.display = 'none';
+            });
+            document.getElementById(section).style.display = 'block';
+        }
+
+        function addHall() {
+            const hallName = document.getElementById("hall-name").value;
+            const capacity = document.getElementById("hall-capacity").value;
+            if (hallName && capacity) {
+                const list = document.getElementById("hall-list");
+                const newItem = document.createElement("div");
+                newItem.className = "example-item";
+                newItem.innerHTML = `${hallName} - Capacity: ${capacity} <button class="delete-btn" onclick="deleteItem(this)">X</button>`;
+                list.appendChild(newItem);
+                document.getElementById("hall-name").value = "";
+                document.getElementById("hall-capacity").value = "";
+            }
+        }
+
+        function deleteItem(button) {
+            button.parentElement.remove();
+        }
+
+        function filterReports() {
+            const selectedFilter = document.getElementById("filter").value;
+            const reports = document.querySelectorAll("#reports-list .example-item");
+
+            reports.forEach(report => {
+                const status = report.getAttribute("data-status");
+                if (selectedFilter === "all" || status === selectedFilter) {
+                    report.style.display = "block";
+                } else {
+                    report.style.display = "none";
+                }
+            });
+        }
+
+        function sendNotification() {
+            const message = document.getElementById("notification-text").value;
+            if (message) {
+                alert(`Notification sent: ${message}`);
+                document.getElementById("notification-text").value = "";
+            } else {
+                alert("Please enter a message.");
+            }
+        }
+    </script>
+
 </body>
 </html>
