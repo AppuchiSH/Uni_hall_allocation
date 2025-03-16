@@ -68,9 +68,7 @@ urlpatterns = [
 
     #DEAN
     path("dean_dashboard/", views.dean_dashboard, name="dean_dashboard"),
-    #REGISER
-    path('register/', register, name='register'),
-
+   
 
 ]
 
