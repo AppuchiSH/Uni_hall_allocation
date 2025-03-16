@@ -2,69 +2,269 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Faculty In-Charge Dashboard</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <script src="{% static 'js/script.js' %}" defer></script>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Faculty Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css" />
     <style>
         body {
             font-family: Arial, sans-serif;
-            background: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            text-align: center;
+            background-color: #f9f9f9;
         }
 
-        .container {
-            max-width: 900px;
-            margin: 20px auto;
-            background: white;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-        }
-
-        .header {
-            background: #333;
-            color: white;
+        .sidebar {
+            width: 250px;
+            background-color: #1f2937;
+            color: #ffffff;
+            height: 100vh;
             padding: 15px;
-            border-radius: 10px 10px 0 0;
+            position: fixed;
+            overflow-y: auto;
         }
 
-        .buttons {
+            .sidebar button {
+                width: 100%;
+                background-color: #374151;
+                color: #ffffff;
+                border: none;
+                padding: 12px;
+                text-align: left;
+                margin-bottom: 5px;
+                border-radius: 8px;
+                transition: background-color 0.2s ease;
+                font-size: 16px;
+                font-weight: 500;
+            }
+
+                .sidebar button:hover {
+                    background-color: #4b5563;
+                }
+
+        .main-content {
+            margin-left: 270px;
+            padding: 20px;
+        }
+
+        h2, h4 {
+            font-weight: bold;
+            color: #1f2937;
+        }
+
+        .card {
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+            box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+            background-color: #ffffff;
+            border: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-approve, .btn-reject {
+            border: none;
+            padding: 6px 16px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        .btn-approve {
+            background-color: #4caf50;
+            color: white;
+        }
+
+            .btn-approve:hover {
+                background-color: #45a049;
+            }
+
+        .btn-reject {
+            background-color: #f44336;
+            color: white;
+        }
+
+            .btn-reject:hover {
+                background-color: #d32f2f;
+            }
+        .logout-btn {
+            width: 100%;
+            background-color: #dc3545;
+            color: #ffffff;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
             margin-top: 20px;
         }
 
-            .buttons button {
-                background: #007BFF;
-                color: white;
-                padding: 10px 20px;
-                margin: 10px;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-                transition: 0.3s;
+            .logout-btn:hover {
+                background-color: #c82333;
             }
 
-                .buttons button:hover {
-                    background: #0056b3;
-                }
+        .hidden {
+            display: none;
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Faculty In-Charge Dashboard</h1>
-        </div>
-        <p>Welcome, Faculty In-Charge! Manage and maintain venue allocations using the options below:</p>
 
-        <div class="buttons">
-            <button onclick="location.href='{% url 'manage_venues' %}'">Manage Venues</button>
-            <button onclick="location.href='{% url 'approve_bookings' %}'">Approve Bookings</button>
-            <button onclick="location.href='{% url 'view_schedule' %}'">View Schedule</button>
-            <button onclick="location.href='{% url 'logout' %}'" style="background: #dc3545;">Logout</button>
+    <div class="sidebar">
+        <div>
+            <p>Time: <span id="time"></span></p>
+            <p>Date: <span id="date"></span></p>
+        </div>
+
+        <button onclick="showSection('pending-requests')">Pending Requests</button>
+        <button onclick="showSection('approved-requests')">Approved Requests</button>
+        <button onclick="showSection('rejected-requests')">Rejected Requests</button>
+        <button onclick="showSection('event-timeline')">Event Timeline</button>
+        <button onclick="showSection('send-notification')">Send Notification</button>
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit" class="logout-btn">Logout</button>
+        </form>
+    </div>
+
+    <div class="main-content">
+        <h2>Welcome, Faculty-in-charge</h2>
+        <p><strong>Department:Computer Science</strong> {{ department }}</p>
+
+        <!-- Pending Requests Section -->
+        <div id="pending-requests" class="section">
+            <h4>Pending Requests</h4>
+            <div class="card">
+                <span>Event 1 - APJ Hall</span>
+                <div>
+                    <button class="btn-approve" onclick="approveRequest()">Accept</button>
+                    <button class="btn-reject" onclick="showRejectDialog()">Reject</button>
+                </div>
+            </div>
+            <div class="card">
+                <span>Event 2 - Auditorium</span>
+                <div>
+                    <button class="btn-approve" onclick="approveRequest()">Accept</button>
+                    <button class="btn-reject" onclick="showRejectDialog()">Reject</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Approved Requests Section -->
+        <div id="approved-requests" class="section hidden">
+            <h4>Approved Requests</h4>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Event</th>
+                        <th>Location</th>
+                        <th>Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Event 1</td>
+                        <td>Conference Room</td>
+                        <td>20/03/2025</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Rejected Requests Section -->
+        <div id="rejected-requests" class="section hidden">
+            <h4>Rejected Requests</h4>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Event</th>
+                        <th>Location</th>
+                        <th>Date</th>
+                        <th>Reason</th>
+                    </tr>
+                </thead>
+                <tbody id="rejected-list">
+                    <!-- Rejected items will appear here -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Event Timeline Section -->
+        <div id="event-timeline" class="section hidden">
+            <h4>Event Timeline</h4>
+            <p>No events yet.</p>
+        </div>
+
+        <!-- Send Notification Section -->
+        <div id="send-notification" class="section hidden">
+            <h4>Send Notification</h4>
+            <form>
+                <div class="mb-2">
+                    <input type="text" class="form-control" placeholder="Recipient">
+                </div>
+                <div class="mb-2">
+                    <textarea class="form-control" placeholder="Write your message here..."></textarea>
+                </div>
+                <button class="btn btn-success">Send</button>
+            </form>
         </div>
     </div>
+
+    <!-- Rejection Dialog -->
+    <div id="reject-dialog" class="hidden">
+        <div class="card">
+            <h5>Reject Reason</h5>
+            <textarea id="reject-reason" class="form-control mb-2" placeholder="Enter reason..."></textarea>
+            <button class="btn-reject" onclick="rejectRequest()">Submit</button>
+            <button class="btn-secondary" onclick="closeRejectDialog()">Cancel</button>
+        </div>
+    </div>
+
+    <script>
+        function showSection(section) {
+            document.querySelectorAll('.section').forEach(el => el.classList.add('hidden'));
+            document.getElementById(section).classList.remove('hidden');
+        }
+
+        function showRejectDialog() {
+            document.getElementById('reject-dialog').classList.remove('hidden');
+        }
+
+        function closeRejectDialog() {
+            document.getElementById('reject-dialog').classList.add('hidden');
+        }
+
+        function rejectRequest() {
+            const reason = document.getElementById('reject-reason').value;
+            if (reason.trim() !== "") {
+                const row = `
+                        <tr>
+                            <td>Event 1</td>
+                            <td>Conference Room</td>
+                            <td>20/03/2025</td>
+                            <td>${reason}</td>
+                        </tr>
+                    `;
+                document.getElementById('rejected-list').innerHTML += row;
+                closeRejectDialog();
+            }
+        }
+
+        function approveRequest() {
+            alert('Request Approved!');
+        }
+
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('time').textContent = now.toLocaleTimeString();
+            document.getElementById('date').textContent = now.toLocaleDateString();
+        }, 1000);
+    </script>
+
 </body>
 </html>
+

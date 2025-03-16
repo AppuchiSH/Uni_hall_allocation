@@ -7,6 +7,33 @@ from django.shortcuts import render, redirect
 from django.http import HttpRequest
 # views.py
 from django.shortcuts import render
+from django.contrib import messages
+from django.urls import reverse
+
+
+
+#signup/register
+def register(request):
+    if request.method == 'POST':
+        username = request.POST['username']
+        password = request.POST['password']
+        position = request.POST['position']
+        club_name = request.POST.get('club_name')
+        department = request.POST.get('department')
+        lab = request.POST.get('lab')
+
+        if len(password) < 8 or not any(char.isdigit() for char in password) or not any(char.isalpha() for char in password):
+            messages.error(request, "Password must be at least 8 characters long and include both letters and numbers.")
+            return redirect('register')
+
+        # Save to database after admin verification (not implemented)
+        # Example:
+        # user = User.objects.create(...)
+
+        messages.success(request, "Registration successfully sent for verification!")
+        return redirect('register')
+
+    return render(request, 'app/register.html')
 
 #faculty in charge
 def view_schedule(request):

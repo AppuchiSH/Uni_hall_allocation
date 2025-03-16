@@ -1,0 +1,204 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f9f9f9;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            margin-top: 50px;
+            max-width: 500px;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            font-weight: bold;
+            color: #1f2937;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background-color: #4caf50;
+            border: none;
+            width: 100%;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            margin-top: 15px;
+        }
+
+            .btn-primary:hover {
+                background-color: #45a049;
+            }
+
+        .hidden {
+            display: none;
+        }
+
+        .text-success {
+            color: #28a745;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h2>Register</h2>
+        <form method="POST" action="{% url 'register' %}">
+            {% csrf_token %}
+            <div class="mb-3">
+                <label for="username" class="form-label">Username</label>
+                <input type="text" id="username" name="username" class="form-control" required>
+            </div>
+
+            <div class="mb-3">
+                <label for="password" class="form-label">Password</label>
+                <input type="password" id="password" name="password" class="form-control" required>
+                <div id="password-error" class="text-danger hidden">Your password must meet all the requirements below:</div>
+                <ul id="password-rules" class="text-muted">
+                    <li id="rule-length" class="text-danger">*Minimum 8 characters*</li>
+                    <li id="rule-alphabet" class="text-danger">*Must include alphabets*</li>
+                    <li id="rule-number" class="text-danger">*Must include numerical characters*</li>
+                </ul>
+            </div>
+
+            <div class="mb-3">
+                <label for="position" class="form-label">Position</label>
+                <select id="position" name="position" class="form-control" required onchange="handlePositionChange()">
+                    <option value="" disabled selected>Select Position</option>
+                    <option value="Club Head">Club Head</option>
+                    <option value="Principal">Principal</option>
+                    <option value="HOD">HOD</option>
+                    <option value="Faculty-In-Charge">Faculty-In-Charge</option>
+                    <option value="Dean of Student Affairs">Dean of Student Affairs</option>
+                    <option value="IQAC">IQAC</option>
+                    <option value="Resource Approval Person">Resource Approval Person</option>
+                </select>
+            </div>
+
+            <div class="mb-3 hidden" id="club-name-section">
+                <label for="club-name" class="form-label">Club Name</label>
+                <select id="club-name" name="club_name" class="form-control">
+                    <option value="" disabled selected>Select Club</option>
+                    <option value="IEEE">IEEE</option>
+                    <option value="ISTE">ISTE</option>
+                    <option value="IEDC">IEDC</option>
+                    <option value="ACM">ACM</option>
+                    <option value="ASME">ASME</option>
+                    <option value="Music Club">Music Club</option>
+                    <option value="Film & Drama Club">Film & Drama Club</option>
+                    <option value="IEI">IEI</option>
+                </select>
+            </div>
+
+            <div class="mb-3 hidden" id="department-section">
+                <label for="department" class="form-label">Department</label>
+                <select id="department" name="department" class="form-control">
+                    <option value="" disabled selected>Select Department</option>
+                    <option value="Civil">Civil</option>
+                    <option value="Chemical">Chemical</option>
+                    <option value="Electronics & Communication">Electronics & Communication</option>
+                    <option value="Electrical & Electronics">Electrical & Electronics</option>
+                    <option value="Mechanical">Mechanical</option>
+                    <option value="Computer Science">Computer Science</option>
+                </select>
+            </div>
+
+            <div class="mb-3 hidden" id="lab-section">
+                <label for="lab" class="form-label">Lab</label>
+                <select id="lab" name="lab" class="form-control">
+                    <option value="" disabled selected>Select Lab</option>
+                    <option value="System Software Lab">System Software Lab</option>
+                    <option value="Operating Systems Lab">Operating Systems Lab</option>
+                    <option value="Networking Lab">Networking Lab</option>
+                    <option value="Data Structures Lab">Data Structures Lab</option>
+                </select>
+            </div>
+
+            <button type="submit" class="btn-primary">Register</button>
+        </form>
+    </div>
+
+    <div id="success-dialog" class="hidden">
+        <div class="alert alert-success">
+            Registration successfully sent for verification!
+        </div>
+    </div>
+
+    <script>
+        function handlePositionChange() {
+            const position = document.getElementById('position').value;
+            document.getElementById('club-name-section').classList.add('hidden');
+            document.getElementById('department-section').classList.add('hidden');
+            document.getElementById('lab-section').classList.add('hidden');
+
+            if (position === 'Club Head') {
+                document.getElementById('club-name-section').classList.remove('hidden');
+            } else if (position === 'HOD' || position === 'Faculty-In-Charge') {
+                document.getElementById('department-section').classList.remove('hidden');
+            } else if (position === 'Resource Approval Person') {
+                document.getElementById('lab-section').classList.remove('hidden');
+            }
+        }
+
+        document.getElementById('password').addEventListener('input', function () {
+            const password = this.value;
+            const errorElement = document.getElementById('password-error');
+            const ruleLength = document.getElementById('rule-length');
+            const ruleAlphabet = document.getElementById('rule-alphabet');
+            const ruleNumber = document.getElementById('rule-number');
+            let isValid = true;
+
+            if (password.length >= 8) {
+                ruleLength.classList.remove('text-danger');
+                ruleLength.classList.add('text-success');
+            } else {
+                ruleLength.classList.remove('text-success');
+                ruleLength.classList.add('text-danger');
+                isValid = false;
+            }
+
+            if (/[a-zA-Z]/.test(password)) {
+                ruleAlphabet.classList.remove('text-danger');
+                ruleAlphabet.classList.add('text-success');
+            } else {
+                ruleAlphabet.classList.remove('text-success');
+                ruleAlphabet.classList.add('text-danger');
+                isValid = false;
+            }
+
+            if (/\d/.test(password)) {
+                ruleNumber.classList.remove('text-danger');
+                ruleNumber.classList.add('text-success');
+            } else {
+                ruleNumber.classList.remove('text-success');
+                ruleNumber.classList.add('text-danger');
+                isValid = false;
+            }
+
+            if (!isValid) {
+                errorElement.classList.remove('hidden');
+            } else {
+                errorElement.classList.add('hidden');
+            }
+        });
+    </script>
+</body>
+
+</html>
+

@@ -5,7 +5,7 @@
     <Name>hall_allocation</Name>
     <RootNamespace>hall_allocation</RootNamespace>
     <TestFramework>Pytest</TestFramework>
-    <InterpreterId>MSBuild|env1|$(MSBuildProjectFullPath)</InterpreterId>
+    <InterpreterId>MSBuild|env|$(MSBuildProjectFullPath)</InterpreterId>
   </PropertyGroup>
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -70,6 +70,7 @@
     <Content Include="app\templates\app\hod_dashboard.html" />
     <Content Include="app\templates\app\iqac_dashboard.html" />
     <Content Include="app\templates\app\principal_dashboard.html" />
+    <Content Include="app\templates\app\register.html" />
     <Content Include="app\templates\app\resource_approval_personnel_dashboard.html" />
     <Content Include="app\templates\app\student_dashboard.html" />
     <Content Include="hall_allocation\.gitignore" />
