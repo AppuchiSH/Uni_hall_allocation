@@ -172,9 +172,14 @@
         function validateLogout() {
             if (confirm('Are you sure you want to logout?')) {
                 window.location.href = '{% url "logout" %}';
+                setTimeout(() => {
+                    window.location.href = '{% url "login" %}';
+                }, 1000);
             }
         }
     </script>
 </body>
 </html>
+
+
 
