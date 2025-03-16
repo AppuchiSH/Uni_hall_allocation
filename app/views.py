@@ -7,33 +7,6 @@ from django.shortcuts import render, redirect
 from django.http import HttpRequest
 # views.py
 from django.shortcuts import render
-from django.contrib import messages
-from django.urls import reverse
-
-
-
-#signup/register
-def register(request):
-    if request.method == 'POST':
-        username = request.POST['username']
-        password = request.POST['password']
-        position = request.POST['position']
-        club_name = request.POST.get('club_name')
-        department = request.POST.get('department')
-        lab = request.POST.get('lab')
-
-        if len(password) < 8 or not any(char.isdigit() for char in password) or not any(char.isalpha() for char in password):
-            messages.error(request, "Password must be at least 8 characters long and include both letters and numbers.")
-            return redirect('register')
-
-        # Save to database after admin verification (not implemented)
-        # Example:
-        # user = User.objects.create(...)
-
-        messages.success(request, "Registration successfully sent for verification!")
-        return redirect('register')
-
-    return render(request, 'app/register.html')
 
 #faculty in charge
 def view_schedule(request):
@@ -253,3 +226,33 @@ def manage_courses(request):
     # Your logic here
     return render(request, 'manage_courses.html')
 
+#DEAN
+def dean_dashboard(request):
+    # Sample event data (replace with actual database data)
+    events = [
+        {"name": "Annual Tech Fest", "status": "Pending", "sub_tasks": ["Budget Approval", "Venue Confirmation"]},
+        {"name": "Cultural Fest", "status": "Approved", "sub_tasks": ["Artist Invitation", "Logistics Arrangement"]},
+    ]
+    
+    return render(request, "app/dean_dashboard.html", {"events": events})
+
+
+#REGISTER
+
+
+from django.shortcuts import render, redirect
+from django.contrib.auth import login
+from .forms import RegistrationForm  # Ensure RegistrationForm exists
+
+def register(request):
+    if request.method == "POST":
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            user = form.save(commit=False)
+            user.set_password(form.cleaned_data['password'])
+            user.save()
+            login(request, user)
+            return redirect('index')  # Ensure 'index' is a valid URL name
+    else:
+        form = RegistrationForm()
+    return render(request, 'app/register.html', {'form': form})
