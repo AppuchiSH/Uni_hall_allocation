@@ -9,146 +9,171 @@
     <script src="{% static 'js/script.js' %}" defer></script>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background: #f4f4f4;
+            font-family: 'Poppins', sans-serif;
+            background: #ecf0f1;
             margin: 0;
             padding: 0;
-            text-align: center;
+            display: flex;
         }
 
-        .container {
-            max-width: 900px;
-            margin: 20px auto;
-            background: white;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-        }
-
-        .header {
-            background: #333;
+        .sidebar {
+            width: 250px;
+            background: #2c3e50;
             color: white;
-            padding: 15px;
-            border-radius: 10px 10px 0 0;
+            height: 100vh;
+            padding: 20px;
+            position: fixed;
         }
 
-        .buttons {
-            margin-top: 20px;
-        }
-
-            .buttons button {
-                background: #007BFF;
-                color: white;
-                padding: 10px 20px;
-                margin: 10px;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-                transition: 0.3s;
+            .sidebar h2 {
+                text-align: center;
             }
 
-                .buttons button:hover {
-                    background: #0056b3;
+            .sidebar button {
+                width: 100%;
+                padding: 10px;
+                margin: 10px 0;
+                background: #34495e;
+                border: none;
+                color: white;
+                cursor: pointer;
+                text-align: left;
+            }
+
+                .sidebar button:hover {
+                    background: #1abc9c;
                 }
 
-        .logout-btn {
-            background: #dc3545;
+        .main-content {
+            margin-left: 270px;
+            padding: 20px;
+            width: calc(100% - 270px);
         }
+
+        .section {
+            display: none;
+        }
+
+            .section.active {
+                display: block;
+            }
+
+        .event-container {
+            background: white;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+
+        .accept-btn, .reject-btn {
+            padding: 5px 10px;
+            border: none;
+            color: white;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        .accept-btn {
+            background: green;
+        }
+
+        .reject-btn {
+            background: red;
+        }
+
+        .timeline-container {
+            background: white;
+            padding: 15px;
+            margin-top: 10px;
+            border-radius: 5px;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .timeline-stage {
+            display: flex;
+            align-items: center;
+            margin: 5px 0;
+        }
+
+        .tick {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: #e74c3c;
+            margin-right: 10px;
+            display: inline-block;
+        }
+
+            .tick.completed {
+                background: #2ecc71;
+            }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h1>Principal Dashboard</h1>
+    <div class="sidebar">
+        <h2>Principal Dashboard</h2>
+        <button onclick="showSection('reports')">Reports</button>
+        <button onclick="showSection('events')">Events</button>
+        <button onclick="showSection('timeline')">Event Timeline</button>
+    </div>
+    <div class="main-content">
+        <div id="reports" class="section active">
+            <h2>Reports</h2>
+            <h3>Pending Reports</h3>
+            <div class="event-container">Report 1 <button class="accept-btn">Accept</button> <button class="reject-btn">Reject</button></div>
+            <h3>Accepted Reports</h3>
+            <div class="event-container">Report 2 - Accepted</div>
+            <h3>Rejected Reports</h3>
+            <div class="event-container">Report 3 - Rejected</div>
         </div>
-        <p>Welcome, Principal! Manage academic and administrative tasks using the options below:</p>
-
-        <div class="buttons">
-            <button onclick="location.href='{% url 'manage_faculty' %}'">Manage Faculty</button>
-            <button onclick="location.href='{% url 'approve_leaves' %}'">Approve Leaves</button>
-            <button onclick="location.href='{% url 'view_reports' %}'">View Academic Reports</button>
-            <button onclick="location.href='{% url 'monitor_performance' %}'">Monitor Performance</button>
-            <button onclick="location.href='{% url 'departmental_meetings' %}'">Departmental Meetings</button>
-            <button onclick="location.href='{% url 'logout' %}'" class="logout-btn">Logout</button>
+        <div id="events" class="section">
+            <h2>Events</h2>
+            <h3>Pending Events</h3>
+            <div class="event-container" onclick="showTimeline('Event 1', 2)">Event 1</div>
+            <h3>Accepted Events</h3>
+            <div class="event-container" onclick="showTimeline('Event 2', 4)">Event 2 - Accepted</div>
+            <h3>Rejected Events</h3>
+            <div class="event-container" onclick="showTimeline('Event 3', 0)">Event 3 - Rejected</div>
+        </div>
+        <div id="timeline" class="section">
+            <h2>Event Timeline</h2>
+            <div id="timeline-content" class="timeline-container">Select an event to see its progress.</div>
         </div>
     </div>
+    <script>
+        function showSection(sectionId) {
+            document.querySelectorAll('.section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(sectionId).classList.add('active');
+        }
+
+        function showTimeline(eventName, stage) {
+            const stages = [
+                "Accepted by Faculty In-Charge",
+                "Approved by HOD",
+                "Approved by Dean of Student Affairs",
+                "Approved by Principal",
+                "Event Done",
+                "Report Submitted"
+            ];
+
+            let timelineHtml = `<h3>${eventName} Progress</h3>`;
+            stages.forEach((step, index) => {
+                timelineHtml += `<div class="timeline-stage">
+                                        <span class="tick ${index < stage ? 'completed' : ''}"></span>
+                                        ${step}
+                                    </div>`;
+            });
+            document.getElementById('timeline-content').innerHTML = timelineHtml;
+        }
+    </script>
 </body>
 </html>
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Principal Dashboard</title>
-    <link rel="stylesheet" href="{% static 'css/style.css' %}">
-    <script src="{% static 'js/script.js' %}" defer></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f4f4;
-            margin: 0;
-            padding: 0;
-            text-align: center;
-        }
 
-        .container {
-            max-width: 900px;
-            margin: 20px auto;
-            background: white;
-            padding: 20px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            border-radius: 10px;
-        }
 
-        .header {
-            background: #333;
-            color: white;
-            padding: 15px;
-            border-radius: 10px 10px 0 0;
-        }
 
-        .buttons {
-            margin-top: 20px;
-        }
-
-            .buttons button {
-                background: #007BFF;
-                color: white;
-                padding: 10px 20px;
-                margin: 10px;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-                transition: 0.3s;
-            }
-
-                .buttons button:hover {
-                    background: #0056b3;
-                }
-
-        .logout-btn {
-            background: #dc3545;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="header">
-            <h1>Principal Dashboard</h1>
-        </div>
-        <p>Welcome, Principal! Manage academic and administrative tasks using the options below:</p>
-
-        <div class="buttons">
-            <button onclick="location.href='{% url 'manage_faculty' %}'">Manage Faculty</button>
-            <button onclick="location.href='{% url 'approve_leaves' %}'">Approve Leaves</button>
-            <button onclick="location.href='{% url 'view_reports' %}'">View Academic Reports</button>
-            <button onclick="location.href='{% url 'monitor_performance' %}'">Monitor Performance</button>
-            <button onclick="location.href='{% url 'departmental_meetings' %}'">Departmental Meetings</button>
-            <button onclick="location.href='{% url 'budget_allocation' %}'">Budget Allocation</button>
-            <button onclick="location.href='{% url 'staff_appointments' %}'">Staff Appointments</button>
-            <button onclick="location.href='{% url 'logout' %}'" class="logout-btn">Logout</button>
-        </div>
-    </div>
-</body>
-</html>
+         
+    
