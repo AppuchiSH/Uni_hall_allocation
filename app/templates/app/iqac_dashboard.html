@@ -9,69 +9,234 @@
     <script src="{% static 'js/script.js' %}" defer></script>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background: #f4f4f4;
+            font-family: 'Poppins', sans-serif;
+            background: #ecf0f1;
             margin: 0;
             padding: 0;
             text-align: center;
         }
 
         .container {
-            max-width: 900px;
-            margin: 20px auto;
+            display: flex;
+            height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: #2c3e50;
+            color: white;
+            padding: 20px;
+            text-align: left;
+        }
+
+            .sidebar h2 {
+                font-size: 18px;
+                text-align: center;
+                margin-bottom: 20px;
+            }
+
+            .sidebar button {
+                width: 100%;
+                padding: 10px;
+                margin-bottom: 10px;
+                background: #34495e;
+                color: white;
+                border: none;
+                cursor: pointer;
+                border-radius: 5px;
+                text-align: left;
+            }
+
+                .sidebar button:hover {
+                    background: #1f2c38;
+                }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            background: #2980b9;
+            color: white;
+            padding: 20px;
+            border-radius: 5px;
+        }
+
+        .report-list {
+            background: white;
+            padding: 20px;
+            margin-top: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            min-height: 300px;
+        }
+
+        .report {
+            background: #f8f9fa;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .accept-btn, .deny-btn {
+            padding: 5px 10px;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        .accept-btn {
+            background: green;
+            color: white;
+        }
+
+        .deny-btn {
+            background: red;
+            color: white;
+        }
+
+        .popup, .overlay {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
             background: white;
             padding: 20px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             border-radius: 10px;
+            z-index: 1000;
         }
 
-        .header {
-            background: #333;
-            color: white;
-            padding: 15px;
-            border-radius: 10px 10px 0 0;
+        .overlay {
+            display: none;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            top: 0;
+            left: 0;
+            position: fixed;
         }
 
-        .buttons {
-            margin-top: 20px;
-        }
-
-            .buttons button {
-                background: #28a745;
-                color: white;
-                padding: 10px 20px;
-                margin: 10px;
-                border: none;
-                border-radius: 5px;
-                cursor: pointer;
-                transition: 0.3s;
-            }
-
-                .buttons button:hover {
-                    background: #218838;
-                }
-
-        .logout-btn {
-            background: #dc3545;
+        .popup select, .popup textarea, .popup button {
+            width: 100%;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 5px;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>IQAC Dashboard</h1>
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <h2>IQAC Dashboard</h2>
+            <p id="liveDateTime"></p>
+            <button onclick="showSection('pendingRequests')">Pending Events</button>
+            <button onclick="showSection('acceptedRequests')">Accepted Events</button>
+            <button onclick="showSection('rejectedRequests')">Rejected Events</button>
+            <button onclick="openPopup()">Send Notification</button>
         </div>
-        <p>Welcome, IQAC Team! Manage quality assurance activities and accreditation processes using the options below:</p>
 
-        <div class="buttons">
-            <button onclick="location.href='{% url 'monitor_quality' %}'">Monitor Quality</button>
-            <button onclick="location.href='{% url 'submit_reports' %}'">Submit Reports</button>
-            <button onclick="location.href='{% url 'accreditation_status' %}'">Accreditation Status</button>
-            <button onclick="location.href='{% url 'manage_feedback' %}'">Manage Feedback</button>
-            <button onclick="location.href='{% url 'organize_workshops' %}'">Organize Workshops</button>
-            <button onclick="location.href='{% url 'review_policies' %}'">Review Policies</button>
-            <button onclick="location.href='{% url 'logout' %}'" class="logout-btn">Logout</button>
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="header">
+                <h1>IQAC Dashboard</h1>
+            </div>
+
+            <div class="report-list" id="pendingRequests">
+                <h3>Pending Requests</h3>
+                <div class="report">
+                    Event 1 - Conference Room
+                    <button class="accept-btn" onclick="acceptRequest(this)">Accept</button>
+                    <button class="deny-btn" onclick="rejectRequest(this)">Reject</button>
+                </div>
+                <div class="report">
+                    Event 2 - Seminar Hall
+                    <button class="accept-btn" onclick="acceptRequest(this)">Accept</button>
+                    <button class="deny-btn" onclick="rejectRequest(this)">Reject</button>
+                </div>
+            </div>
+
+            <div class="report-list" id="acceptedRequests" style="display: none;">
+                <h3>Accepted Requests</h3>
+            </div>
+
+            <div class="report-list" id="rejectedRequests" style="display: none;">
+                <h3>Rejected Requests</h3>
+            </div>
         </div>
     </div>
+
+    <!-- Notification Popup -->
+    <div class="overlay" id="overlay" onclick="closePopup()"></div>
+    <div class="popup" id="notificationPopup">
+        <h3>Send Notification</h3>
+        <select>
+            <option>Select Club Head</option>
+            <option>Club Head 1</option>
+            <option>Club Head 2</option>
+        </select>
+        <textarea placeholder="Write your message here..."></textarea>
+        <button onclick="closePopup()">Cancel</button>
+        <button onclick="closePopup()">Send</button>
+    </div>
+
+    <script>
+        // Live Date & Time
+        function updateDateTime() {
+            const now = new Date();
+            document.getElementById("liveDateTime").innerHTML = `Time: ${now.toLocaleTimeString()} <br> Date: ${now.toLocaleDateString()}`;
+        }
+        setInterval(updateDateTime, 1000);
+        updateDateTime();
+
+        // Section Switching
+        function showSection(sectionId) {
+            document.getElementById('pendingRequests').style.display = 'none';
+            document.getElementById('acceptedRequests').style.display = 'none';
+            document.getElementById('rejectedRequests').style.display = 'none';
+            document.getElementById(sectionId).style.display = 'block';
+        }
+
+        // Accept Event
+        function acceptRequest(button) {
+            const reportDiv = button.parentElement;
+            button.remove();
+            reportDiv.querySelector('.deny-btn').remove();
+            document.getElementById('acceptedRequests').appendChild(reportDiv);
+        }
+
+        // Reject Event with Reason
+        function rejectRequest(button) {
+            const reportDiv = button.parentElement;
+            const reason = prompt("Enter the reason for rejection:");
+            if (reason) {
+                button.remove();
+                reportDiv.querySelector('.accept-btn').remove();
+                reportDiv.innerHTML += `<br><strong>Reason:</strong> ${reason}`;
+                document.getElementById('rejectedRequests').appendChild(reportDiv);
+            }
+        }
+
+        // Open & Close Notification Popup
+        function openPopup() {
+            document.getElementById('notificationPopup').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+        }
+
+        function closePopup() {
+            document.getElementById('notificationPopup').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        }
+    </script>
 </body>
 </html>
+
