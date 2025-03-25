@@ -242,7 +242,7 @@ def dean_dashboard(request):
 
 from django.shortcuts import render, redirect
 from django.contrib.auth import login
-from .forms import RegistrationForm  # Ensure RegistrationForm exists
+from .forms import RegistrationForm  # Ensure this is correctly imported
 
 def register(request):
     if request.method == "POST":
@@ -252,7 +252,9 @@ def register(request):
             user.set_password(form.cleaned_data['password'])
             user.save()
             login(request, user)
-            return redirect('index')  # Ensure 'index' is a valid URL name
+            return redirect('/register/?success=true')  # Redirect with success flag
     else:
         form = RegistrationForm()
-    return render(request, 'app/register.html', {'form': form})
+    
+    return render(request, 'app/register.html', {'form': form, 'success': request.GET.get("success")})
+

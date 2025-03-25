@@ -52,4 +52,3 @@ document.addEventListener("DOMContentLoaded", function () {
     window.showCalendar = showCalendar;
     window.closeCalendar = closeCalendar;
 });
-
