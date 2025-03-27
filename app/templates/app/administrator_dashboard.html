@@ -88,6 +88,31 @@
                 border: none;
                 cursor: pointer;
             }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #343a40;
+            color: white;
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+            button:focus {
+                outline: none;
+            }
     </style>
 </head>
 <body>
@@ -98,6 +123,8 @@
         <button onclick="showSection('manage_halls')">Manage Halls</button>
         <button onclick="showSection('event_reports')">Event Reports</button>
         <button onclick="showSection('send_notification')">Send Notification</button>
+        <button onclick="showSection('user_verification')">User Verification</button>
+
         <button style="background: #dc3545;">Logout</button>
     </div>
 
@@ -147,6 +174,26 @@
             <textarea id="notification-text" placeholder="Type your message here..." rows="4" style="width: 100%;"></textarea>
             <button onclick="sendNotification()">Send</button>
         </div>
+
+        <!-- User Verification Section -->
+        <div id="user_verification" class="content-section container" style="display: none;">
+            <h2>User Verification</h2>
+            <table id="pending-users-table" border="1">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Position</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Pending user rows will be loaded dynamically -->
+                </tbody>
+            </table>
+            <button onclick="loadPendingUsers()">Load Pending Users</button>
+        </div>
     </div>
 
     <script>
@@ -157,48 +204,86 @@
             document.getElementById(section).style.display = 'block';
         }
 
-        function addHall() {
-            const hallName = document.getElementById("hall-name").value;
-            const capacity = document.getElementById("hall-capacity").value;
-            if (hallName && capacity) {
-                const list = document.getElementById("hall-list");
-                const newItem = document.createElement("div");
-                newItem.className = "example-item";
-                newItem.innerHTML = `${hallName} - Capacity: ${capacity} <button class="delete-btn" onclick="deleteItem(this)">X</button>`;
-                list.appendChild(newItem);
-                document.getElementById("hall-name").value = "";
-                document.getElementById("hall-capacity").value = "";
-            }
+        // Load Pending Users
+        function loadPendingUsers() {
+            fetch('/get_pending_users/')
+                .then(response => response.json())
+                .then(data => {
+                    const tableBody = document.querySelector('#pending-users-table tbody');
+                    tableBody.innerHTML = ''; // Clear existing rows
+
+                    data.forEach(user => {
+                        const row = document.createElement('tr');
+                        row.innerHTML = `
+                                <td>${user.id}</td>
+                                <td>${user.username}</td>
+                                <td>${user.position}</td>
+                                <td>${user.email}</td>
+
+                                <td>
+                                    <button onclick="approveUser(${user.id})">Approve</button>
+                                    <button onclick="rejectUser(${user.id})">Reject</button>
+                                </td>
+                            `;
+                        tableBody.appendChild(row);
+                    });
+                })
+                .catch(error => console.error('Error loading pending users:', error));
         }
 
-        function deleteItem(button) {
-            button.parentElement.remove();
-        }
-
-        function filterReports() {
-            const selectedFilter = document.getElementById("filter").value;
-            const reports = document.querySelectorAll("#reports-list .example-item");
-
-            reports.forEach(report => {
-                const status = report.getAttribute("data-status");
-                if (selectedFilter === "all" || status === selectedFilter) {
-                    report.style.display = "block";
-                } else {
-                    report.style.display = "none";
+        // Approve User
+        function getCSRFToken() {
+            let cookieValue = null;
+            const cookies = document.cookie.split(';');
+            cookies.forEach(cookie => {
+                const trimmed = cookie.trim();
+                if (trimmed.startsWith('csrftoken=')) {
+                    cookieValue = trimmed.substring('csrftoken='.length, trimmed.length);
                 }
             });
+            return cookieValue;
         }
 
-        function sendNotification() {
-            const message = document.getElementById("notification-text").value;
-            if (message) {
-                alert(`Notification sent: ${message}`);
-                document.getElementById("notification-text").value = "";
-            } else {
-                alert("Please enter a message.");
-            }
+        function approveUser(userId) {
+            fetch(`/approve_user/${userId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCSRFToken() // Include CSRF token
+                }
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('User approved successfully!');
+                        loadPendingUsers(); // Refresh the table
+                    } else {
+                        alert('Failed to approve user.');
+                    }
+                })
+                .catch(error => console.error('Error approving user:', error));
+        }
+
+
+
+        // Reject User
+        function rejectUser(userId) {
+            fetch(`/reject_user/${userId}/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': getCSRFToken() // Include CSRF token
+                }
+            })
+                .then(response => {
+                    if (response.ok) {
+                        alert('User rejected successfully!');
+                        loadPendingUsers(); // Refresh the pending users table
+                    } else {
+                        alert('Failed to reject user.');
+                    }
+                })
+                .catch(error => console.error('Error rejecting user:', error));
         }
     </script>
 
 </body>
 </html>
+

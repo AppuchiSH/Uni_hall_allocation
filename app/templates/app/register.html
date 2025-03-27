@@ -79,6 +79,12 @@
                     </ul>
                 </div>
             </div>
+            <div class="mb-3">
+                <label for="email" class="form-label">Email</label>
+                <input type="email" id="email" name="email" class="form-control" required oninput="validateEmail()" />
+                <small id="email-error" class="text-danger hidden">Invalid email format.</small> <!-- Error message -->
+            </div>
+
 
             <div class="mb-3">
                 <label for="position" class="form-label">Position</label>
@@ -136,7 +142,8 @@
                 </select>
             </div>
 
-            <button type="submit" class="btn-primary" id="submit-btn" disabled>Register</button>
+
+            <button type="submit">Register</button>
         </form>
     </div>
 
@@ -195,6 +202,18 @@
             // Enable submit button only if both conditions are met
             submitBtn.disabled = !(meetsLength && meetsAlphanumeric);
         }
+        function validateEmail() {
+            const email = document.getElementById("email").value;
+            const emailError = document.getElementById("email-error");
+
+            if (email.includes("@")) {
+                emailError.classList.add("hidden");
+            } else {
+                emailError.classList.remove("hidden");
+            }
+        }
+
+
     </script>
 
 </body>

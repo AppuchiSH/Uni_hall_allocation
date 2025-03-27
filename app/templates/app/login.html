@@ -101,13 +101,25 @@
 <body>
     <div class="login-container">
         <h2>Login</h2>
-        <form onsubmit="event.preventDefault(); redirectToRole();">
+
+        {% if messages %}
+        <div class="error-message">
+            {% for message in messages %}
+            <p style="color: red;">{{ message }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+
+        <form method="POST" action="{% url 'login' %}">
             {% csrf_token %}
+
             <input type="text" name="username" placeholder="Username" class="input-field" required>
             <input type="password" name="password" placeholder="Password" class="input-field" required>
-            <select name="role" id="roleSelect" class="input-field" required>
+
+            <select name="role" class="input-field" required>
                 <option value="">Select Role</option>
-                <option value="Administrator">Administrator</option>
+                <option value="Admin">Admin</option>
                 <option value="Club Head">Club Head</option>
                 <option value="Faculty In-Charge">Faculty In-Charge</option>
                 <option value="Student">Student</option>
@@ -117,11 +129,12 @@
                 <option value="HOD">HOD</option>
                 <option value="Dean of Student Affairs">Dean of Student Affairs</option>
             </select>
+
             <button type="submit">Login</button>
         </form>
-        <!-- Invalid User Message -->
-        <p id="error-msg" class="error-message">Invalid user, please check credentials.</p>
+
         <a href="{% url 'register' %}" class="link-light">Sign up/Register</a>
     </div>
+
 </body>
 </html>

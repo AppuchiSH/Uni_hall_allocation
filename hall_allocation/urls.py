@@ -6,17 +6,27 @@ from django.urls import path, include
 from django.contrib import admin
 from django.contrib.auth.views import LogoutView
 from app import views  # Import views
+from django.urls import path
+from app.views import administrator_dashboard, custom_login, administrator_dashboard
+from django.urls import path
+from app import views
+from django.urls import path
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    
+    path("admin/verify_users/", views.get_pending_users, name="verify_users"),
     # Home Page (Front Page)
     path('', views.home, name='home'),
 
     # Register and Login Pages
     path('register/', views.register, name='register'),
     path('login/', views.custom_login, name='login'),
-
+    path("login/", custom_login, name="login"),
+    path("administrator-dashboard/", administrator_dashboard, name="administrator_dashboard"),  # Admin dashboard
+     path('get_pending_users/', views.get_pending_users, name='get_pending_users'),
+    path('approve_user/<int:user_id>/', views.approve_user, name='approve_user'),
+    path('reject_user/<int:user_id>/', views.reject_user, name='reject_user'),
     path('monitor_quality/', views.monitor_quality, name='monitor_quality'),
     path('manage_users/', views.manage_users, name='manage_users'),
     path('approve_requests/', views.approve_requests, name='approve_requests'),
@@ -56,7 +66,7 @@ urlpatterns = [
     path('logout/', LogoutView.as_view(next_page='/'), name='logout'),
 
     # Role-Based Dashboards
-    path('administrator_dashboard/', views.admin_dashboard, name='admin_dashboard'),
+    path('administrator_dashboard/', views.administrator_dashboard, name='admin_dashboard'),
     path('club_head_dashboard/', views.club_head_dashboard, name='club_head_dashboard'),
     path('faculty_in-charge_dashboard/', views.faculty_dashboard, name='faculty_dashboard'),
     path('student_dashboard/', views.student_dashboard, name='student_dashboard'),
