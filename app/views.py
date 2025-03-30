@@ -219,6 +219,21 @@ def custom_login(request):
 
     return render(request, "app/login.html")
 
+from django.shortcuts import render, redirect
+from .forms import HallRequestForm
+from .models import HallRequest
+
+def club_head_request(request):
+    if request.method == "POST":
+        form = HallRequestForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('success_page')  # Redirect to a success page (you can define it)
+    else:
+        form = HallRequestForm()
+    
+    return render(request, 'club_head_request.html', {'form': form})
+
 # Dashboard Views for Different Roles
 def administrator_dashboard(request):
     """Renders the Administrator dashboard."""

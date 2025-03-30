@@ -229,6 +229,8 @@
                 }
             </script>
 
+
+
             <div class="form-group">
                 <label for="participants">Approximate Number of Participants</label>
                 <input type="number" id="participants" name="participants" oninput="suggestHalls()" required>
@@ -238,7 +240,52 @@
                 <input type="checkbox" id="declaration" required>
                 <label for="declaration" id="declarationLabel"></label>
             </div>
-            <button type="submit" class="submit-btn">Submit Request</button>
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    const amenityCheckboxes = document.querySelectorAll('input[name="equipment"]');
+                    const hallContainer = document.getElementById("halls-container");
+
+                    function updateHalls() {
+                        let selectedAmenities = [];
+                        amenityCheckboxes.forEach(checkbox => {
+                            if (checkbox.checked) {
+                                selectedAmenities.push(checkbox.value);
+                            }
+                        });
+
+                        fetch(`/get-available-halls/?amenities[]=${selectedAmenities.join("&amenities[]=")}`)
+                            .then(response => response.json())
+                            .then(data => {
+                                hallContainer.innerHTML = ""; // Clear previous halls
+
+                                if (data.halls.length === 0) {
+                                    hallContainer.innerHTML = "<p>No halls available for selected amenities.</p>";
+                                } else {
+                                    data.halls.forEach(hall => {
+                                        hallContainer.innerHTML += `
+                                    <label>
+                                        <input type="checkbox" name="available_halls" value="${hall.id}">
+                                        ${hall.name} (Capacity: ${hall.capacity})
+                                    </label><br>
+                                `;
+                                    });
+                                }
+                            });
+                    }
+
+                    amenityCheckboxes.forEach(checkbox => {
+                        checkbox.addEventListener("change", updateHalls);
+                    });
+
+                    updateHalls();  // Run on page load
+                });
+            </script>
+
+            <form method="POST">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit" class="submit-btn">Submit Request</button>
+            </form>
         </form>
         <div class="success-message" id="successMessage">Form submitted successfully!</div>
     </div>

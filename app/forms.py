@@ -7,6 +7,20 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.utils.translation import gettext_lazy as _
 from django import forms
 from .models import CustomUser
+from .models import HallRequest
+
+class HallRequestForm(forms.ModelForm):
+    class Meta:
+        model = HallRequest
+        fields = [
+            'applicant', 'department', 'date', 'time', 'purpose',
+            'podium', 'mic', 'led', 'stage', 'dias', 'participants'
+        ]
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date'}),
+            'time': forms.TimeInput(attrs={'type': 'time'}),
+        }
+
 
 class BootstrapAuthenticationForm(AuthenticationForm):
     """Authentication form which uses boostrap CSS."""

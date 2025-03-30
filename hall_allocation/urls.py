@@ -6,11 +6,10 @@ from django.urls import path, include
 from django.contrib import admin
 from django.contrib.auth.views import LogoutView
 from app import views  # Import views
-from django.urls import path
 from app.views import administrator_dashboard, custom_login, administrator_dashboard
-from django.urls import path
 from app import views
 from django.urls import path
+from app.views import club_head_request
 
 
 urlpatterns = [
@@ -18,6 +17,7 @@ urlpatterns = [
     path("admin/verify_users/", views.get_pending_users, name="verify_users"),
     # Home Page (Front Page)
     path('', views.home, name='home'),
+     path('request-hall/', club_head_request, name='club_head_request'),
 
     # Register and Login Pages
     path('register/', views.register, name='register'),
