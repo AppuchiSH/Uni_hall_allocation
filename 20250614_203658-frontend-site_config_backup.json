@@ -1,0 +1,8 @@
+{
+ "db_name": "_5e5899d8398b5f7b",
+ "db_password": "newpassword123",
+ "db_type": "mariadb",
+ "developer_mode": 1,
+ "encryption_key": "on5CpRn0jPzzb6cy4NxWlFMipha3Sag8_skB7S4mCrE=",
+ "server_script_enabled": true
+}
